@@ -1,5 +1,6 @@
 package game2048;
 
+import java.lang.runtime.SwitchBootstraps;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -9,7 +10,7 @@ import java.util.Observable;
  */
 public class Model extends Observable {
     /** Current contents of the board. */
-    private Board board;
+    private final Board board;
     /** Current score. */
     private int score;
     /** Maximum score so far.  Updated when game ends. */
@@ -138,6 +139,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for(int i = 0; i < size; i++){
+            for(int n =0; n < size; n ++){
+                if(b.tile(i,n) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +157,17 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for(int i = 0; i < size; i++){
+            for(int n =0; n < size; n ++){
+                if(b.tile(i,n) == null){
+                    continue;
+                }
+                if(b.tile(i,n).value() == MAX_PIECE){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,8 +179,49 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
-        return false;
+        int size = b.size();
+
+        /** Case 2 two adjacent titles has the same value. */
+        if (!emptySpaceExists(b)){
+            for(int r = 0; r < size; r++){
+                for(int c = 0; c < size; c++){
+                    if (adjacentSameTileValue(b, r, c)){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return emptySpaceExists(b);
     }
+
+    static Boolean adjacentSameTileValue(Board b, int r, int c){
+        Boolean flag = false;
+
+        if((isInArea(b,r,c) && isInArea(b,r-1,c)) && flag == false){
+            flag = b.tile(r,c).value() == b.tile(r-1,c).value();
+        }
+
+        if((isInArea(b,r,c) && isInArea(b,r+1,c)) && flag == false){
+            flag = b.tile(r,c).value() == b.tile(r+1,c).value();
+        }
+
+        if((isInArea(b,r,c) && isInArea(b,r,c-1)) && flag == false){
+            flag = b.tile(r,c).value() ==  b.tile(r,c-1).value();
+        }
+
+        if((isInArea(b,r,c) && isInArea(b,r,c+1)) && flag == false){
+            flag = b.tile(r,c).value() ==  b.tile(r,c+1).value();
+        }
+
+        return flag;
+    }
+
+    static Boolean isInArea(Board b, int r, int c){
+        return r < b.size() && c < b.size() && r >= 0 && c >= 0;
+    }
+
+
 
 
     @Override
