@@ -3,6 +3,7 @@ package game2048;
 import java.lang.runtime.SwitchBootstraps;
 import java.util.Formatter;
 import java.util.Observable;
+import java.util.logging.SocketHandler;
 
 
 /** The state of a game of 2048.
@@ -115,6 +116,38 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        // merge row number indicates the tile is merged
+
+        board.setViewingPerspective(side);
+        for (int c = 0; c < board.size(); c++) {
+            int merge_flag = board.size() - 1;
+            for (int r = board.size() - 1; r >= 0; r--) {
+                int r_next = findRowNextValue(c,r-1);
+                if(r_next != -1){
+                    Tile t = tile(c,r_next);
+                    Tile t_top = tile(c,merge_flag);
+                    // if the t_top is null
+                    if (t_top == null & t != null){
+                        board.move(c, merge_flag, t);
+                        changed = true;
+                    }
+
+                    if (t_top != null & t !=null){
+                        if (t_top.value() == t.value()) {
+                            board.move(c, merge_flag, t);
+                            score += t.value() * 2;
+                            changed = true;
+                            merge_flag -= 1;
+                        }else{
+                            board.move(c,merge_flag-1,t);
+                            merge_flag -= 1;
+                            changed = true;
+                        }
+                }
+                }
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -122,6 +155,18 @@ public class Model extends Observable {
         return changed;
     }
 
+    public int findRowNextValue(int c, int r){
+        if(r >= 0){
+            Tile t = tile(c,r);
+            if (t != null){
+                return r;
+            }else{
+                return findRowNextValue(c,r-1);
+            }
+        }else {
+            return -1;
+        }
+    }
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
      */
