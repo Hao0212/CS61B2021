@@ -1,9 +1,7 @@
 package game2048;
 
-import java.lang.runtime.SwitchBootstraps;
 import java.util.Formatter;
 import java.util.Observable;
-import java.util.logging.SocketHandler;
 
 
 /** The state of a game of 2048.
