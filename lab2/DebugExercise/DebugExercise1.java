@@ -1,13 +1,17 @@
 package DebugExercise;
 
+import java.text.DecimalFormat;
+
 /**
  * Exercise for learning how the debug, breakpoint, and step-into
  * feature work.
  */
 public class DebugExercise1 {
     public static int divideThenRound(int top, int bottom) {
-        int quotient = top / bottom;
-        int result = Math.round(quotient);
+        DecimalFormat df = new DecimalFormat("0.00");
+        String quotient = df.format((float) top/bottom);
+        float quotient1 = Float.parseFloat(quotient);
+        int result = Math.round(quotient1);
         return result;
     }
 
